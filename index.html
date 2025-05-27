@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reasons Why I Love You</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            perspective: 1000px;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease-in-out;
+        }
+
+        .card {
+            position: absolute;
+            width: 320px;
+            height: 480px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 30px;
+            transform-origin: center;
+            transition: all 0.8s ease-in-out;
+            left: 50%;
+            top: 50%;
+            margin-left: -160px;
+            margin-top: -240px;
+        }
+
+        .card.active {
+            transform: translateZ(0) scale(1);
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .card.next {
+            transform: translateX(100%) rotateY(-45deg) scale(0.8);
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .card.prev {
+            transform: translateX(-100%) rotateY(45deg) scale(0.8);
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .card.hidden {
+            transform: translateZ(-200px) scale(0.6);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .illustration {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .reason-text {
+            font-size: 24px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .heart {
+            color: #ff6b6b;
+            font-size: 30px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .controls {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 20;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: white;
+            color: #ff6b6b;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .auto-toggle {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .auto-toggle.active {
+            background: #4ecdc4;
+        }
+
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: #ff6b6b;
+            font-size: 20px;
+            animation: floatUp 4s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(100vh) scale(0);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(-10vh) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20vh) scale(0);
+            }
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #ff6b6b;
+            border-radius: 2px;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel" id="carousel">
+            <div class="card active">
+                <div class="illustration">😍</div>
+                <div class="reason-text">Your smile lights up my entire world</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card next">
+                <div class="illustration">🌟</div>
+                <div class="reason-text">You make every ordinary moment magical</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card hidden">
+                <div class="illustration">🦋</div>
+                <div class="reason-text">You give me butterflies every single day</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card hidden">
+                <div class="illustration">🌙</div>
+                <div class="reason-text">You're the last thing I think about before sleep</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card hidden">
+                <div class="illustration">☀️</div>
+                <div class="reason-text">You're the first thing I want to see when I wake up</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card hidden">
+                <div class="illustration">🎵</div>
+                <div class="reason-text">Your laugh is my favorite song</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card hidden">
+                <div class="illustration">🏠</div>
+                <div class="reason-text">You make anywhere feel like home</div>
+                <div class="heart">💖</div>
+            </div>
+            <div class="card prev">
+                <div class="illustration">💫</div>
+                <div class="reason-text">You're my wish come true</div>
+                <div class="heart">💖</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="prevBtn">‹</button>
+            <button class="control-btn auto-toggle" id="autoBtn">⏸</button>
+            <button class="control-btn" id="nextBtn">›</button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="floating-hearts" id="floatingHearts"></div>
+    </div>
+
+    <script>
+        class LoveCarousel {
+            constructor() {
+                this.cards = document.querySelectorAll('.card');
+                this.currentIndex = 0;
+                this.isAutoPlay = true;
+                this.autoInterval = null;
+                this.progressInterval = null;
+                this.autoSpeed = 4000; // 4 seconds per slide
+                
+                this.initializeCarousel();
+                this.bindEvents();
+                this.startAutoPlay();
+                this.createFloatingHearts();
+            }
+            
+            initializeCarousel() {
+                this.updateCarousel();
+            }
+            
+            bindEvents() {
+                document.getElementById('nextBtn').addEventListener('click', () => this.next());
+                document.getElementById('prevBtn').addEventListener('click', () => this.prev());
+                document.getElementById('autoBtn').addEventListener('click', () => this.toggleAutoPlay());
+                
+                // Touch/swipe support
+                let startX = 0;
+                const carousel = document.getElementById('carousel');
+                
+                carousel.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                });
+                
+                carousel.addEventListener('touchend', (e) => {
+                    const endX = e.changedTouches[0].clientX;
+                    const diff = startX - endX;
+                    
+                    if (Math.abs(diff) > 50) {
+                        if (diff > 0) {
+                            this.next();
+                        } else {
+                            this.prev();
+                        }
+                    }
+                });
+            }
+            
+            updateCarousel() {
+                this.cards.forEach((card, index) => {
+                    card.className = 'card';
+                    
+                    if (index === this.currentIndex) {
+                        card.classList.add('active');
+                    } else if (index === (this.currentIndex + 1) % this.cards.length) {
+                        card.classList.add('next');
+                    } else if (index === (this.currentIndex - 1 + this.cards.length) % this.cards.length) {
+                        card.classList.add('prev');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+            
+            next() {
+                this.currentIndex = (this.currentIndex + 1) % this.cards.length;
+                this.updateCarousel();
+                this.resetProgress();
+            }
+            
+            prev() {
+                this.currentIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
+                this.updateCarousel();
+                this.resetProgress();
+            }
+            
+            toggleAutoPlay() {
+                const autoBtn = document.getElementById('autoBtn');
+                
+                if (this.isAutoPlay) {
+                    this.stopAutoPlay();
+                    autoBtn.textContent = '▶';
+                    autoBtn.classList.remove('active');
+                } else {
+                    this.startAutoPlay();
+                    autoBtn.textContent = '⏸';
+                    autoBtn.classList.add('active');
+                }
+                
+                this.isAutoPlay = !this.isAutoPlay;
+            }
+            
+            startAutoPlay() {
+                this.stopAutoPlay();
+                this.startProgress();
+                
+                this.autoInterval = setInterval(() => {
+                    this.next();
+                }, this.autoSpeed);
+            }
+            
+            stopAutoPlay() {
+                if (this.autoInterval) {
+                    clearInterval(this.autoInterval);
+                    this.autoInterval = null;
+                }
+                this.stopProgress();
+            }
+            
+            startProgress() {
+                this.stopProgress();
+                const progressBar = document.getElementById('progress');
+                let width = 0;
+                
+                this.progressInterval = setInterval(() => {
+                    width += 100 / (this.autoSpeed / 50);
+                    progressBar.style.width = width + '%';
+                    
+                    if (width >= 100) {
+                        width = 0;
+                    }
+                }, 50);
+            }
+            
+            stopProgress() {
+                if (this.progressInterval) {
+                    clearInterval(this.progressInterval);
+                    this.progressInterval = null;
+                }
+            }
+            
+            resetProgress() {
+                const progressBar = document.getElementById('progress');
+                progressBar.style.width = '0%';
+                
+                if (this.isAutoPlay) {
+                    this.startProgress();
+                }
+            }
+            
+            createFloatingHearts() {
+                const container = document.getElementById('floatingHearts');
+                
+                setInterval(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.textContent = '💖';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    
+                    container.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 6000);
+                }, 1500);
+            }
+        }
+        
+        // Initialize the carousel when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new LoveCarousel();
+        });
+    </script>
+</body>
+</html>
